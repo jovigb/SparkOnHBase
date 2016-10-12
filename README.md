@@ -1,5 +1,5 @@
 ##RowCounter
-HADOOP_CLASSPATH=`hbase classpath` hadoop jar /opt/cloudera/parcels/CDH/jars/hbase-server-1.2.0-cdh5.7.2.jar rowcounter t1
+HADOOP_CLASSPATH="`hbase classpath`" hadoop jar /opt/cloudera/parcels/CDH/jars/hbase-server-1.2.0-cdh5.7.2.jar rowcounter t1
 or
 hbase org.apache.hadoop.hbase.mapreduce.RowCounter t1
 
