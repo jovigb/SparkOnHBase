@@ -3,5 +3,5 @@ HADOOP_CLASSPATH=&acute;hbase classpath&acute; hadoop jar /opt/cloudera/parcels/
 
 hbase org.apache.hadoop.hbase.mapreduce.RowCounter t1
 
-##nc stream socket
+##nc stream service
 cat access.log | nc -lk cdh180 9977
