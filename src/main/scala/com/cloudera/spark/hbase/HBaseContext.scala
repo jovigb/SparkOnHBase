@@ -60,6 +60,10 @@ class HBaseContext(@transient sc: SparkContext,
                    @transient config: Configuration,
                     val tmpHdfsConfgFile: String = null) extends Serializable with Logging {
 
+  System.setProperty("HADOOP_USER_NAME", "hdfs");  
+  config.set("hbase.zookeeper.property.clientPort", "2181");
+  config.set("hbase.zookeeper.quorum", "192.168.2.180,192.168.2.179,192.168.2.178");
+  config.set("hbase.master", "192.168.2.179:60000"); 
 
   @transient var credentials = SparkHadoopUtil.get.getCurrentUserCredentials()
   @transient var tmpHdfsConfiguration:Configuration = config
@@ -71,11 +75,11 @@ class HBaseContext(@transient sc: SparkContext,
 
   if (tmpHdfsConfgFile != null && config != null) {
     val fs = FileSystem.newInstance(config)
-    val tmpPath = new Path(tmpHdfsConfgFile)
+    val tmpPath = new Path(tmpHdfsConfgFile)    
     if (!fs.exists(tmpPath)) {
       val outputStream = fs.create(tmpPath)
       config.write(outputStream)
-      outputStream.close();
+      outputStream.close();      
     } else {
       logWarning("tmpHdfsConfigDir " + tmpHdfsConfgFile + " exist!!")
     }

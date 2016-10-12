@@ -25,13 +25,19 @@ import org.apache.hadoop.hbase.client.Put
 import org.apache.spark.streaming.StreamingContext
 import org.apache.spark.streaming.Seconds
 import org.apache.spark.SparkConf
+import org.apache.spark.storage.StorageLevel
 import com.cloudera.spark.hbase.HBaseContext
+import StreamingContext._
+import java.security.MessageDigest
 
 object HBaseStreamingBulkPutExample {
+  def md5(text: String): String = MessageDigest.getInstance("MD5").digest(text.getBytes()).map(0xFF & _).map { "%02x".format(_) }.foldLeft("") { _ + _ }
+
   def main(args: Array[String]) {
+
     if (args.length == 0) {
       System.out.println("HBaseStreamingBulkPutExample {host} {port} {tableName} {columnFamily}");
-      return;
+      return ;
     }
 
     val host = args(0);
@@ -44,13 +50,17 @@ object HBaseStreamingBulkPutExample {
     println("tableName:" + tableName)
     println("columnFamily:" + columnFamily)
 
-    val sparkConf = new SparkConf().setAppName("HBaseBulkPutTimestampExample " + tableName + " " + columnFamily)
+    val sparkConf = new SparkConf().setMaster("local[*]").setAppName("HBaseBulkPutTimestampExample " + tableName + " " + columnFamily)
     sparkConf.set("spark.cleaner.ttl", "120000");
     val sc = new SparkContext(sparkConf)
 
     val ssc = new StreamingContext(sc, Seconds(1))
 
     val lines = ssc.socketTextStream(host, port.toInt)
+    //    lines.print()
+    //    val words = lines.flatMap(_.split(" "))
+    //    val wordCounts = words.map(x => (x, 1)).reduceByKey(_ + _)
+    //    wordCounts.print()
 
     val conf = HBaseConfiguration.create();
     conf.addResource(new Path("/etc/hbase/conf/core-site.xml"));
@@ -62,8 +72,9 @@ object HBaseStreamingBulkPutExample {
       tableName,
       (putRecord) => {
         if (putRecord.length() > 0) {
-          val put = new Put(Bytes.toBytes(putRecord))
-          put.add(Bytes.toBytes("c"), Bytes.toBytes("foo"), Bytes.toBytes("bar"))
+          val put = new Put(Bytes.toBytes(md5(putRecord)))
+          put.add(Bytes.toBytes("c"), Bytes.toBytes("foo"), Bytes.toBytes(putRecord))
+          println(md5(putRecord) + '\t' + putRecord)
           put
         } else {
           null
@@ -72,7 +83,7 @@ object HBaseStreamingBulkPutExample {
       false);
 
     ssc.start();
-      
-      
+    ssc.awaitTermination();
+
   }
 }

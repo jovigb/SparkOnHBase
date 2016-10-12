@@ -35,7 +35,7 @@ object HBaseBulkPutTimestampExample {
     val tableName = args(0);
     val columnFamily = args(1);
 
-    val sparkConf = new SparkConf().setAppName("HBaseBulkPutTimestampExample " + tableName + " " + columnFamily)
+    val sparkConf = new SparkConf().setMaster("local[*]").setAppName("HBaseBulkPutTimestampExample " + tableName + " " + columnFamily)
     val sc = new SparkContext(sparkConf)
       
 

@@ -35,7 +35,7 @@ object HBaseBulkGetExample {
 
     val tableName = args(0);
 
-    val sparkConf = new SparkConf().setAppName("HBaseBulkGetExample " + tableName)
+    val sparkConf = new SparkConf().setMaster("local[*]").setAppName("HBaseBulkGetExample " + tableName)
     val sc = new SparkContext(sparkConf)
       
 
@@ -45,11 +45,9 @@ object HBaseBulkGetExample {
       (Bytes.toBytes("2")),
       (Bytes.toBytes("3")),
       (Bytes.toBytes("4")),
-      (Bytes.toBytes("5")),
-      (Bytes.toBytes("6")),
-      (Bytes.toBytes("7"))))
+      (Bytes.toBytes("5"))))
 
-    val conf = HBaseConfiguration.create()
+    val conf = HBaseConfiguration.create()  
     conf.addResource(new Path("/etc/hbase/conf/core-site.xml"))
     conf.addResource(new Path("/etc/hbase/conf/hbase-site.xml"))
 

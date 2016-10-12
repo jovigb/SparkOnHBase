@@ -27,7 +27,7 @@ import org.apache.hadoop.hbase.client.Scan
 import java.util.ArrayList
 import org.apache.spark.SparkConf
 import com.cloudera.spark.hbase.HBaseContext
-
+import org.apache.hadoop.hbase.filter.{FilterList, SingleColumnValueFilter, CompareFilter}
 
 object HBaseScanRDDExample {
   def main(args: Array[String]) {
@@ -38,7 +38,7 @@ object HBaseScanRDDExample {
 
     val tableName = args(0);
 
-    val sparkConf = new SparkConf().setAppName("HBaseDistributedScanExample " + tableName )
+    val sparkConf = new SparkConf().setMaster("local[*]").setAppName("HBaseDistributedScanExample " + tableName )
     val sc = new SparkContext(sparkConf)
 
     val conf = HBaseConfiguration.create()
@@ -48,6 +48,23 @@ object HBaseScanRDDExample {
     var scan = new Scan()
     scan.setCaching(100)
 
+//    val list = new FilterList(FilterList.Operator.MUST_PASS_ONE);
+//    val filter1 = new SingleColumnValueFilter(
+//      Bytes.toBytes("c"),
+//      Bytes.toBytes("foo"),
+//      CompareFilter.CompareOp.EQUAL,
+//      Bytes.toBytes("my value")
+//      );
+//    list.addFilter(filter1);
+//    val filter2 = new SingleColumnValueFilter(
+//      Bytes.toBytes("c"),
+//      Bytes.toBytes("foo"),
+//      CompareFilter.CompareOp.EQUAL,
+//      Bytes.toBytes("my other value")
+//      );
+//    list.addFilter(filter2);
+//    scan.setFilter(list);
+    
     val hbaseContext = new HBaseContext(sc, conf);
 
     var getRdd = hbaseContext.hbaseScanRDD( tableName, scan)

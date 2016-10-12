@@ -34,7 +34,7 @@ object HBaseBulkDeleteExample {
     	
       val tableName = args(0);
     	
-      val sparkConf = new SparkConf().setAppName("HBaseBulkDeleteExample " + tableName)
+      val sparkConf = new SparkConf().setMaster("local[*]").setAppName("HBaseBulkDeleteExample " + tableName)
       val sc = new SparkContext(sparkConf)
       
       //[Array[Byte]]

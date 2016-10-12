@@ -35,7 +35,7 @@ object HBaseBulkPutExample {
     val tableName = args(0);
     val columnFamily = args(1);
 
-    val sparkConf = new SparkConf().setAppName("HBaseBulkPutExample " + tableName + " " + columnFamily)
+    val sparkConf = new SparkConf().setMaster("local[*]").setAppName("HBaseBulkPutExample " + tableName + " " + columnFamily)
     val sc = new SparkContext(sparkConf)
 
     //[(Array[Byte], Array[(Array[Byte], Array[Byte], Array[Byte])])]
@@ -48,7 +48,7 @@ object HBaseBulkPutExample {
     )
     )
 
-    val conf = HBaseConfiguration.create();
+    val conf = HBaseConfiguration.create(); 
     conf.addResource(new Path("/etc/hbase/conf/core-site.xml"));
     conf.addResource(new Path("/etc/hbase/conf/hbase-site.xml"));
 

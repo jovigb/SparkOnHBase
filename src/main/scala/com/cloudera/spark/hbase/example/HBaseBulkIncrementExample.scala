@@ -35,7 +35,7 @@ object HBaseBulkIncrementExample {
       val tableName = args(0);
       val columnFamily = args(1);
     	
-      val sparkConf = new SparkConf().setAppName("HBaseBulkIncrementExample " + tableName + " " + columnFamily)
+      val sparkConf = new SparkConf().setMaster("local[*]").setAppName("HBaseBulkIncrementExample " + tableName + " " + columnFamily)
       val sc = new SparkContext(sparkConf)
       
       //[(Array[Byte], Array[(Array[Byte], Array[Byte], Long)])]

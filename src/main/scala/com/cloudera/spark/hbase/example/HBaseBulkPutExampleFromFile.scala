@@ -39,7 +39,7 @@ object HBaseBulkPutExampleFromFile {
       val columnFamily = args(1)
       val inputFile = args(2)
     	
-      val sparkConf = new SparkConf().setAppName("HBaseBulkPutExampleFromFile " + 
+      val sparkConf = new SparkConf().setMaster("local[*]").setAppName("HBaseBulkPutExampleFromFile " + 
           tableName + " " + columnFamily + " " + inputFile)
       val sc = new SparkContext(sparkConf)
       

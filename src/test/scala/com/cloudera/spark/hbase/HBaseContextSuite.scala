@@ -44,7 +44,7 @@ class HBaseContextSuite extends FunSuite with BeforeAndAfterEach with BeforeAndA
     htu.createTable(Bytes.toBytes(tableName), Bytes.toBytes(columnFamily))
     println(" - created table")
 
-    val sparkConfig = new SparkConf();
+    val sparkConfig = new SparkConf()
     sparkConfig.set("spark.broadcast.compress", "false");
     sc = new SparkContext("local", "test", sparkConfig)
   }
@@ -176,7 +176,13 @@ class HBaseContextSuite extends FunSuite with BeforeAndAfterEach with BeforeAndA
       (Bytes.toBytes("5"), Array((Bytes.toBytes(columnFamily), Bytes.toBytes("counter"), 5L)))))
 
     val hbaseContext = new HBaseContext(sc, config);
-
+    
+    println(" - delete increment records")
+    hbaseContext.bulkDelete[(Array[Byte], Array[(Array[Byte], Array[Byte], Long)])](rdd, 
+        tableName, 
+        putRecord => new Delete(putRecord._1),
+        4);
+        
     hbaseContext.bulkIncrement[(Array[Byte], Array[(Array[Byte], Array[Byte], Long)])](rdd,
       tableName,
       (incrementRecord) => {
@@ -196,10 +202,13 @@ class HBaseContextSuite extends FunSuite with BeforeAndAfterEach with BeforeAndA
         increment
       },
       4);
+
 
     val connection = HConnectionManager.createConnection(config)
-    val htable = connection.getTable(Bytes.toBytes("t1"))
-
+    val htable = connection.getTable(Bytes.toBytes(tableName))
+    
+//    println(" - truncate table")
+//    htu.truncateTable(Bytes.toBytes("t1"))
     assert(Bytes.toLong(htable.get(new Get(Bytes.toBytes("1"))).
       getColumnLatest(Bytes.toBytes(columnFamily), Bytes.toBytes("counter")).
       getValue()) == 2L)
@@ -362,7 +371,7 @@ class HBaseContextSuite extends FunSuite with BeforeAndAfterEach with BeforeAndA
     
     val scanList = scanRdd.collect
     
-    //assert(scanList.length == 3)
+    assert(scanList.length == 3)
     
   }
 
